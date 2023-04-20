@@ -2,7 +2,7 @@
 
 Welcome to the R4DS rlang Book Club!
 
-We are working together to read [_rlang_](https://rlang.r-lib.org/) by Lionel Henry & Hadley Wickham (copyright NA).
+We are working together to read the entire [_rlang documentation_](https://rlang.r-lib.org/) by Lionel Henry & Hadley Wickham.
 
 Join the [#book_club-rlang](https://rfordatascience.slack.com/archives/C052ATK1ESF) channel on the [R4DS Slack](https://r4ds.io/join) to participate.
 As we read, we are producing [notes about the book](https://r4ds.io/rlang).

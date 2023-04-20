@@ -1,0 +1,79 @@
+# Introduction
+
+**Learning objectives:**
+
+-   **Get to know** one another.
+-   Determine whether **this club is for you.**
+-   Explain **why {rlang} exists.**
+-   Describe the sections of the [**{rlang} documentation.**](https://rlang.r-lib.org/){target="_blank"}
+
+## Hi, my name is...
+
+**Camera on** or **raise your hand** if you're willing to introduce yourself!
+
+-   **Name**
+-   **Location** and/or **timezone**
+-   **R experience level**
+-   **Why you're here**
+
+## What the heck is rlang?
+
+-   **tidy eval** framework to make things easier for users
+-   **rlang errors** framework for easier-to-understand messaging
+    -   now shared with [**{cli}**](https://cli.r-lib.org/){target="_blank"}
+-   **argument intake** tools for checking/validating/preprocessing args
+    -   `usethis::use_standalone("r-lib/rlang", "types-check")` (dev usethis)
+-   **programming interfaces** to work with R and R objects
+
+## Overall doc layout
+
+Load the [**{rlang} pkgdown site**](https://rlang.r-lib.org/){target="_blank"} (but keep this page handy to remember what to look at)
+
+-   **Reference** vs **Articles**
+-   **Article Types**
+    -   **Overviews** (concepts)
+    -   **Guides** (how-to)
+    -   **Notes** (caveats & such, short)
+-   [**dev version**](https://rlang.r-lib.org/dev/){target="_blank"}
+
+## Article categories
+
+-   **Tidy evaluation**
+    -   data-masking & `{{`
+-   **Metaprogramming**
+    -   beyond `{{`
+    -   inclues the `enquo()` stuff you may have heard of
+-   **Conditions**
+    -   guidance on better error messages
+
+## Reference categories
+
+🤨 Breakdown **doesn't perfectly match** Articles
+
+-   **Tidy evaluation**
+    -   Tools
+    -   **Metaprogramming tools** 🤨
+    -   Advanced tools
+-   **Function arguments**
+-   **Error handling**
+-   **Session**
+-   **Defused expressions** 🤨
+-   **Objects**
+
+🤞I've tried to mix these in with **relevant articles** in the [**schedule.**](https://docs.google.com/spreadsheets/d/1Rw6TXuC0xP43JpzjCpYS70do04OEyaj6XjyKiOkXy90/edit?usp=sharing){target="_blank"}
+
+## Meeting Videos
+
+### Cohort 1
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+
+```         
+LOG
+```
+
+</details>

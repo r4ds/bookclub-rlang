@@ -13,8 +13,8 @@
 
 -   **Name**
 -   **Location** and/or **timezone**
--   **R experience level**
--   **Why you're here**
+-   **Any previous R4DS clubs?**
+-   **Why are you here?**
 
 ## What the heck is rlang?
 
@@ -38,29 +38,42 @@ Load the [**{rlang} pkgdown site**](https://rlang.r-lib.org/){target="_blank"} (
 
 ## Article categories
 
--   **Tidy evaluation**
+-   🧹 **Tidy evaluation**
     -   data-masking & `{{`
--   **Metaprogramming**
+-   👩‍💻 **Metaprogramming**
     -   beyond `{{`
     -   inclues the `enquo()` stuff you may have heard of
--   **Conditions**
+-   ⚠️ **Conditions**
     -   guidance on better error messages
 
 ## Reference categories
 
 🤨 Breakdown **doesn't perfectly match** Articles
 
--   **Tidy evaluation**
-    -   Tools
-    -   **Metaprogramming tools** 🤨
-    -   Advanced tools
--   **Function arguments**
--   **Error handling**
--   **Session**
--   **Defused expressions** 🤨
--   **Objects**
+-   🧹 **Tidy evaluation**
+    -   🧹 **Tools**
+    -   👩‍💻 **Metaprogramming tools** 🤨
+    -   🧹 **Advanced tools**
+-   Function arguments
+-   ⚠️ **Error handling**
+-   Session
+-   👩‍💻 **Defused expressions** 🤨
+-   Objects
 
-🤞I've tried to mix these in with **relevant articles** in the [**schedule.**](https://docs.google.com/spreadsheets/d/1Rw6TXuC0xP43JpzjCpYS70do04OEyaj6XjyKiOkXy90/edit?usp=sharing){target="_blank"}
+🤞 I've tried to mix these in with **relevant articles** in the [**schedule.**](https://docs.google.com/spreadsheets/d/1Rw6TXuC0xP43JpzjCpYS70do04OEyaj6XjyKiOkXy90/edit?usp=sharing){target="_blank"}
+
+## How to prepare (maybe?)
+
+1.  **Read [Article](https://rlang.r-lib.org/reference/topic-data-mask.html){target="_blank"}**
+    -   **ctrl-click [Reference links](https://rlang.r-lib.org/reference/topic-defuse.html){target="_blank"}**
+    -   **Outline** learning objectives & slides
+2.  Read those **References**
+    -   **Add to slides**
+    -   Some **in-line,** some **after**
+    -   **[Search tidyverse github org](https://github.com/search?q=org%3Atidyverse%20is_bare_list&type=code){target="_blank"} for examples!**
+    -   **Add related references** (to a point)
+3.  **Iterate** & **edit** 'til it **makes sense**
+4.  **Update schedule dates**
 
 ## Meeting Videos
 

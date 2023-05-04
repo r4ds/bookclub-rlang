@@ -1,13 +1,261 @@
 # Tidy Evaluation & Metaprogramming
 
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  eval = FALSE,
+  echo = TRUE
+)
+```
+
+
 **Learning objectives:**
 
-- THESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY
+- Why data masking exists, and how it works, in theory
+- Patterns for using data masking in practice
 
-## SLIDE 1 {-}
+## Problem {-}
 
-- ADD SLIDES AS SECTIONS (`##`).
-- TRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF.
+### Part 1: reference {-}
+
+- Data frame columns are not objects in the global environment...
+- ... but we want to address them as such
+
+```{r}
+# proper search path: from environment object to column
+mean(mtcars$cyl + mtcars$am)
+
+# improper search: this is not the object you seek
+mean(mtcars$cyl + mtcars$am)
+```
+
+
+### Part 2: evaluation {-}
+
+- Functions need to take data frame columns as arguments...
+- ... but need to evaluate those names at the proper time and in proper context:     
+    - upon execution of the function
+    - in the data (frame) environment
+
+```{r}
+my_mean <- function(data, var1, var2) {
+  dplyr::summarise(data, mean(var1 + var2))
+}
+
+my_mean(mtcars, cyl, am)
+#> Error in `dplyr::summarise()`:
+#> i In argument: `mean(var1 + var2)`.
+#> Caused by error:
+#> ! object 'cyl' not found
+```
+
+
+## How data masking solves problem 1 {-}
+
+### Elevate the data environment  {-}
+
+- Objects are defined in their environment
+- Columns are defined in their data frame
+- To enable users to refer to columns as objects, data-masking functions must:
+  - Change the search path for column names
+  - Give the data environment priority
+
+### Disambiguate references {-}
+
+- Suppose `col` is defined both in the global and data environment
+- How does one refer to the right `col`?
+- With pronouns
+  - `.data` refers to column in the data environment
+  - `.env` to an object in the global (parent) environment
+
+## How defusal/injection solve problem 2 {-}
+
+### Defuse {-}
+
+- If bare column names are not defused, they will be evaluated immediately--hence in the wrong (global) environment
+- If those names are defused, they need to be marked for later evaluation
+- Mechanisms:
+  - First quote (e.g., `enquo`) and evaluate (i.e., `!!`)
+  - Embrace to quote and evaluate in one go for single columns: `{{` 
+
+### Inject
+
+- If bare column names are provided as arguments, they must be "injected" into the function's body
+- Mechanisms: same as above
+
+### Summary of how data masking works
+
+1. **Defuse arguments.** First, quote bare names. Then, evaluate them later.
+1. **Make data an environment.** Column names are resolved here. 
+1. **Evaluate arguments explicitly.** 
+
+## Data masking programming patterns {-}
+
+- Argument behavior
+- Patterns
+
+## Argument behavior {-}
+
+From the docs:
+
+> In a regular function, arguments can be defined in terms of a type of objects that they accept.
+
+> Data-masked arguments are more complex. Not only do they generally accept a specific type of objects ..., they exhibit special computational behaviours.
+
+## Typology of argument behavior {-}
+
+- **Data-masked expressions.** Expressions may refer to the columns of the supplied data frame.
+- **Data-masked symbols.** Same as data-masked arguments but the supplied expressions must be simple column names.
+- **Tidy selection.** alternative to data masking that supports selection helpers like starts_with(). There is in fact no masking at all. Expressions are either interpreted in the context of the data frame or evaluated in the user environment.
+- **Dynamic dots.** These may be data-masked arguments, tidy selections, or just regular arguments. Dynamic dots support injection of multiple arguments
+
+## Argument behavior in the wild {-}
+
+- Data masking in [mutate](https://dplyr.tidyverse.org/reference/mutate.html).
+- Tidy selection in, well, [select](https://dplyr.tidyverse.org/reference/select.html).
+- Dynamic dots in [tibble](https://tibble.tidyverse.org/reference/tibble.html).
+
+## Overview of data masking programming patterns {-}
+
+1. **Forwarding.** Pass variables to another function. Inherit its behavior.
+1. **Names.** Pass character vector of column names.
+1. **Bridge.** Pass to bridge that accepts argument behavior, and from there pass to target function.
+1. **Transformation.**
+
+## Forwarding patterns {-}
+
+> With the forwarding patterns, arguments inherit the behaviour of the data-masked arguments they are passed in.
+
+With
+
+- `{{`
+- `...`
+
+## Forwarding with `{{` {-}
+
+Single argument
+
+```{r}
+# user-provided `var` is injected into the function body
+my_summarise <- function(data, var) {
+  data %>% dplyr::summarise({{ var }})
+}
+```
+
+
+## Forwarding with `...` {-}
+
+Multiple arguments
+
+```{r}
+# all user-provided elements of `...` are injected
+my_group_by <- function(.data, ...) {
+  .data %>% dplyr::group_by(...)
+}
+
+mtcars %>% my_group_by(cyl = cyl * 100, am)
+```
+
+## Names patterns {-}
+
+>  function takes strings or character vectors of column names
+
+Two patterns:
+
+- One name
+- Multiple names
+
+## One name {-}
+
+Use the `.data` pronoun
+
+These are equivalent:
+
+```{r}
+mtcars %>% dplyr::summarise(mean = mean(cyl))
+
+mtcars %>% dplyr::summarise(mean = mean(.data$cyl))
+
+var <- "cyl"
+mtcars %>% dplyr::summarise(mean = mean(.data[[var]]))
+```
+
+## Multiple names {-}
+
+- There is no plural of the `.data` pronoun
+- But if target function accepts tidy select, use `all_of()`
+- And if not, might need either
+  - bridge pattern
+  - symbolize-and-inject
+
+Example of `all_of()`
+
+```{r}
+vars <- c("cyl", "am")
+mtcars %>% tidyr::pivot_longer(all_of(vars))
+```
+
+
+## Bridge patterns {-}
+
+- **selection -> data-mask.**
+- **names -> data-mask.**
+- **data-mask -> selection.**
+
+## selection -> data-mask, via across() {-}
+
+- across(), normally for mapping functions over columns, performs selections
+- takes tidy selection in `.cols`
+- returns tibble
+
+QUESTIONS: how is this an example of this bridge?
+
+```{r}
+# single selection
+my_group_by <- function(data, var) {
+  data %>% dplyr::group_by(across({{ var }}))
+}
+
+# multiple selections
+my_group_by <- function(.data, ...) {
+  .data %>% dplyr::group_by(across(c(...)))
+}
+```
+
+## names -> data-mask, via across(all_of()) {-}
+
+- `all_of()` takes character names and is a tidy selector
+- `across()` performs selection
+
+```{r}
+my_group_by <- function(data, vars) {
+  data %>% dplyr::group_by(across(all_of(vars)))
+}
+
+mtcars %>% my_group_by(c("cyl", "am"))
+```
+
+## data-mask -> selection, via transmute {-}
+
+- `transmute()` creates a data frame that consists of columns in `...`
+- `names()` yields a character vector of column names from `...`
+- `all_of()` accepts a character vector of names and performs tidy selection
+
+```{r}
+my_pivot_longer <- function(data, ...) {
+  # Forward `...` in data-mask context with `transmute()`
+  # and save the inputs names
+  inputs <- dplyr::transmute(data, ...)
+  names <- names(inputs)
+  
+  # Update the data with the inputs
+  data <- dplyr::mutate(data, !!!inputs)
+
+  # Select the inputs by name with `all_of()`
+  tidyr::pivot_longer(data, cols = all_of(names))
+}
+
+mtcars %>% my_pivot_longer(cyl, am = am * 100)
+```
 
 ## Meeting Videos {-}
 

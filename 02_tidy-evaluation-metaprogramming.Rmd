@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 mean(mtcars$cyl + mtcars$am)
 
 # improper search: this is not the object you seek
-mean(mtcars$cyl + mtcars$am)
+mean(cyl + am)
 ```
 
 

@@ -88,6 +88,16 @@ my_mean(mtcars, cyl, am)
 1. **Make data an environment.** Column names are resolved here. 
 1. **Evaluate arguments explicitly.** 
 
+## Data masking programming patterns : general problem {-}  
+
+```
+my_fun <- function(my_arg-my_behavior) {
+
+  tidyverse::fun(my_arg-their_behavior)
+
+}
+```
+
 ## Data masking programming patterns {-}
 
 - Argument behavior
@@ -108,7 +118,21 @@ From the docs:
 - **Tidy selection.** alternative to data masking that supports selection helpers like starts_with(). There is in fact no masking at all. Expressions are either interpreted in the context of the data frame or evaluated in the user environment.
 - **Dynamic dots.** These may be data-masked arguments, tidy selections, or just regular arguments. Dynamic dots support injection of multiple arguments
 
+For more, read [here](https://rlang.r-lib.org/reference/topic-data-mask-programming.html#argument-behaviours)
+
 ## Argument behavior in the wild {-}
+
+### Developers can signal argument behavior via roxygen2 tags... {-}
+
+```
+@param foo <[`data-masked`][dplyr::dplyr_data_masking]> What `foo` does.
+
+@param bar <[`tidy-select`][dplyr::dplyr_tidy_select]> What `bar` does.
+
+@param ... <[`dynamic-dots`][rlang::dyn-dots]> What these dots do.
+```
+
+### ... and they have {-}
 
 - Data masking in [mutate](https://dplyr.tidyverse.org/reference/mutate.html).
 - Tidy selection in, well, [select](https://dplyr.tidyverse.org/reference/select.html).

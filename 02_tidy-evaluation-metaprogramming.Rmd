@@ -195,10 +195,13 @@ Use the `.data` pronoun
 These are equivalent:
 
 ```{r}
+# tidyverse
 mtcars %>% dplyr::summarise(mean = mean(cyl))
 
+# data masking-ish, with bare name
 mtcars %>% dplyr::summarise(mean = mean(.data$cyl))
 
+# data masking with character name <- THIS IS THE CODE OF INTEREST
 var <- "cyl"
 mtcars %>% dplyr::summarise(mean = mean(.data[[var]]))
 ```
@@ -215,11 +218,21 @@ Example of `all_of()`
 
 ```{r}
 vars <- c("cyl", "am")
-mtcars %>% tidyr::pivot_longer(all_of(vars))
+mtcars %>% tidyr::pivot_longer(
+  # `all_of()` takes characters: https://tidyselect.r-lib.org/reference/all_of.html#ref-usage
+  # but exhibits tidy-select behavior
+  # which is what tidyr::pivot_longer expects for `cols`: https://tidyr.tidyverse.org/reference/pivot_longer.html#arguments
+  cols = all_of(vars)
+)
 ```
 
-
 ## Bridge patterns {-}
+
+From the docs:
+
+> Sometimes the function you are calling does not implement the behaviour you would like to give to the arguments of your function. [...] The general technique consists in forwarding the arguments inside a context that implements the behaviour that you want. Then, find a way to bridge the result to the target verb or function.
+
+The common bridge patterns are:
 
 - **selection -> data-mask.**
 - **names -> data-mask.**
@@ -227,11 +240,16 @@ mtcars %>% tidyr::pivot_longer(all_of(vars))
 
 ## selection -> data-mask, via across() {-}
 
-- across(), normally for mapping functions over columns, performs selections
-- takes tidy selection in `.cols`
-- returns tibble
+Setup:
 
-QUESTIONS: how is this an example of this bridge?
+- outer function, `my_group_by()`, expects selection
+- inner function, `dplyr::group_by()`, [expects data-masking](https://dplyr.tidyverse.org/reference/group_by.html#ref-usage)
+
+Building the bridge:
+
+- across(), normally for mapping functions over columns, performs selections
+-[ takes tidy selection in `.cols`](https://dplyr.tidyverse.org/reference/across.html#ref-usage)
+- [returns tibble](https://dplyr.tidyverse.org/reference/across.html#value)
 
 ```{r}
 # single selection
@@ -241,18 +259,35 @@ my_group_by <- function(data, var) {
 
 # multiple selections
 my_group_by <- function(.data, ...) {
-  .data %>% dplyr::group_by(across(c(...)))
+  .data %>% dplyr::group_by(
+    across(  # <- expects tidy-select; returns tibble
+      c(     # <- tidy-selection
+        ...  # <- tidy-selection
+      )
+    )
+  )
 }
 ```
 
 ## names -> data-mask, via across(all_of()) {-}
 
+Setup:
+
+- outer function, `my_group_by()`, expects character names
+- inner function, `dplyr::group_by()`, [expects data-masking](https://dplyr.tidyverse.org/reference/group_by.html#ref-usage)
+
+Building the bridge:
+
 - `all_of()` takes character names and is a tidy selector
-- `across()` performs selection
+- `across()` performs selection and returns a tibble
 
 ```{r}
 my_group_by <- function(data, vars) {
-  data %>% dplyr::group_by(across(all_of(vars)))
+  data %>% dplyr::group_by(
+    across(        # <- takes selection; returns tibble
+      all_of(vars) # <- takes character vector; performs tidy-selection
+    )
+  )
 }
 
 mtcars %>% my_group_by(c("cyl", "am"))

@@ -208,7 +208,7 @@ mtcars %>% dplyr::summarise(mean = mean(.data[[var]]))
 
 ## Multiple names {-}
 
-- There is no plural of the `.data` pronoun
+- There is no plural of the `.data` pronoun (SNARKY ASIDE: but isn't data gramatically plural...?)
 - But if target function accepts tidy select, use `all_of()`
 - And if not, might need either
   - bridge pattern
@@ -217,6 +217,7 @@ mtcars %>% dplyr::summarise(mean = mean(.data[[var]]))
 Example of `all_of()`
 
 ```{r}
+# NOTE: this is already a bridge pattern...
 vars <- c("cyl", "am")
 mtcars %>% tidyr::pivot_longer(
   # `all_of()` takes characters: https://tidyselect.r-lib.org/reference/all_of.html#ref-usage

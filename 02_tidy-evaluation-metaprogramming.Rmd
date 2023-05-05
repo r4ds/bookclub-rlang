@@ -77,12 +77,12 @@ my_mean(mtcars, cyl, am)
   - First quote (e.g., `enquo`) and evaluate (i.e., `!!`)
   - Embrace to quote and evaluate in one go for single columns: `{{` 
 
-### Inject
+### Inject {-}
 
 - If bare column names are provided as arguments, they must be "injected" into the function's body
 - Mechanisms: same as above
 
-### Summary of how data masking works
+### Summary of how data masking works {-}
 
 1. **Defuse arguments.** First, quote bare names. Then, evaluate them later.
 1. **Make data an environment.** Column names are resolved here. 

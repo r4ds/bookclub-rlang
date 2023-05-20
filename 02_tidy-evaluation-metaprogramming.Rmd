@@ -7,7 +7,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 **Learning objectives:**
 
 - Why data masking exists, and how it works, in theory
@@ -316,6 +315,63 @@ my_pivot_longer <- function(data, ...) {
 
 mtcars %>% my_pivot_longer(cyl, am = am * 100)
 ```
+
+### Double Evaluation {-}
+
+https://rlang.r-lib.org/reference/topic-double-evaluation.html
+
+Tidy eval (and in particular, data-masking) introduces a bit of a problem that people 
+may not have thought about before: 
+
+> it accepts expressions that are ***computations***
+
+We need to be careful about how we evaluate tidyeval expressions when we design 
+functions, because we can fall into the trap of evaluating expressions more often
+than we should. 
+
+##### Avoid {-}
+
+We can sometimes avoid double-evaluation issues by evaluating the expression to 
+create an intermediate variable
+
+(aside: lol transmute again?)
+
+##### Symbols / glue strings {-}
+Glue strings and other expression/symbol evaluation doesn't "suffer" from this problem
+
+- "not suffering" meaning it doesn't execute code and instead translates the code to text
+
+### Injection Operators Out Of Context {-}
+
+https://rlang.r-lib.org/reference/topic-inject-out-of-context.html
+
+Or, "what happens when you go overboard"
+
+Injection operators `{{`, `!!`, and `!!!` are extensions of R syntax that only mean things
+when evaluated in tidyverse context.
+
+`{{` getting evaluated outside of tidy-eval is relatively harmless (except that it 
+doesn't do what you want)
+
+`!!` and `!!!` are negation operators and sometimes will cast things to logical 
+if evaluated outside of tidyeval. It won't tell you that it did that either, so...
+should avoid? (n+1 reasons to just use data masking instead of injections...)
+
+### `{{` on regular objects {-}
+
+https://rlang.r-lib.org/reference/topic-embrace-non-args.html
+
+If you use `{{` on regular objects (and not on arguments), it captures the value 
+of the object. This is related to how enquo works. 
+
+### Function references {-}
+
+https://rlang.r-lib.org/reference/eval_tidy.html - underlying function that powers data masking
+
+https://rlang.r-lib.org/reference/dot-data.html - documentation for the pronouns
+
+https://rlang.r-lib.org/reference/as_data_mask.html - underlying functions inside of eval_tidy
+
 
 ## Meeting Videos {-}
 

@@ -12,9 +12,7 @@ knitr::opts_chunk$set(
 - Why data masking exists, and how it works, in theory
 - Patterns for using data masking in practice
 
-## Problem {-}
-
-### Part 1: reference {-}
+## Problem Part 1: reference {-}
 
 - Data frame columns are not objects in the global environment...
 - ... but we want to address them as such
@@ -28,7 +26,7 @@ mean(cyl + am)
 ```
 
 
-### Part 2: evaluation {-}
+## Problem Part 2: evaluation {-}
 
 - Functions need to take data frame columns as arguments...
 - ... but need to evaluate those names at the proper time and in proper context:     
@@ -316,7 +314,7 @@ my_pivot_longer <- function(data, ...) {
 mtcars %>% my_pivot_longer(cyl, am = am * 100)
 ```
 
-### Double Evaluation {-}
+## Double Evaluation {-}
 
 https://rlang.r-lib.org/reference/topic-double-evaluation.html
 
@@ -341,7 +339,7 @@ Glue strings and other expression/symbol evaluation doesn't "suffer" from this p
 
 - "not suffering" meaning it doesn't execute code and instead translates the code to text
 
-### Injection Operators Out Of Context {-}
+## Injection Operators Out Of Context {-}
 
 https://rlang.r-lib.org/reference/topic-inject-out-of-context.html
 
@@ -357,14 +355,14 @@ doesn't do what you want)
 if evaluated outside of tidyeval. It won't tell you that it did that either, so...
 should avoid? (n+1 reasons to just use data masking instead of injections...)
 
-### `{{` on regular objects {-}
+## `{{` on regular objects {-}
 
 https://rlang.r-lib.org/reference/topic-embrace-non-args.html
 
 If you use `{{` on regular objects (and not on arguments), it captures the value 
 of the object. This is related to how enquo works. 
 
-### Function references {-}
+## Function references {-}
 
 https://rlang.r-lib.org/reference/eval_tidy.html - underlying function that powers data masking
 

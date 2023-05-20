@@ -316,7 +316,7 @@ my_pivot_longer <- function(data, ...) {
 mtcars %>% my_pivot_longer(cyl, am = am * 100)
 ```
 
-### Double Evaluation {-}
+## Guide: Double Evaluation {-}
 
 https://rlang.r-lib.org/reference/topic-double-evaluation.html
 
@@ -341,6 +341,7 @@ Glue strings and other expression/symbol evaluation doesn't "suffer" from this p
 
 - "not suffering" meaning it doesn't execute code and instead translates the code to text
 
+## Tidy Eval: Notes {-}
 ### Injection Operators Out Of Context {-}
 
 https://rlang.r-lib.org/reference/topic-inject-out-of-context.html
@@ -367,8 +368,6 @@ of the object. This is related to how enquo works.
 ### Function references {-}
 
 https://rlang.r-lib.org/reference/eval_tidy.html - underlying function that powers data masking
-
-https://rlang.r-lib.org/reference/dot-data.html - documentation for the pronouns
 
 https://rlang.r-lib.org/reference/as_data_mask.html - underlying functions inside of eval_tidy
 

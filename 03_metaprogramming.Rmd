@@ -1,0 +1,34 @@
+# Metaprogramming
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  eval = FALSE,
+  echo = TRUE
+)
+```
+
+**Learning objectives:**
+
+- LOS HERE
+
+## SLIDE 1 {-}
+
+
+## Function references {-}
+
+-   [FUNCTIONS](URL)
+-   [FUNCTIONS](URL)
+
+## Meeting Videos {-}
+
+### Cohort 1 {-}
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+LOG
+```
+</details>

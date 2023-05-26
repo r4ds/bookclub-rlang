@@ -99,6 +99,9 @@ call("mean", sym(x), na.rm = TRUE) == expr(mean(foo, na.rm = TRUE))
 -   [call2()](https://rlang.r-lib.org/reference/call2.html)
 -   [base::bquote()](https://rdrr.io/r/base/bquote.html)
 -   [base::substitute() base::quote() base::enquote()](https://rdrr.io/r/base/substitute.html)
+-   [parse_expr() parse_exprs() parse_quo() parse_quos()](https://rlang.r-lib.org/reference/parse_expr.html)
+-   [expr_print() expr_deparse()](https://rlang.r-lib.org/reference/expr_print.html)
+-   [is_expression() is_syntactic_literal() is_symbolic()](https://rlang.r-lib.org/reference/is_expression.html)
 
 ## Meeting Videos {-}
 

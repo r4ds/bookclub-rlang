@@ -1,0 +1,118 @@
+# Metaprogramming
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  eval = FALSE,
+  echo = TRUE
+)
+library(rlang)
+```
+
+**Learning objectives:**
+
+-   Explain why it's useful to know about defused expressions (maybe?).
+-   Describe the relationship between defusing and lazy evaluation.
+-   Compare and contrast the three types of defused expressions.
+-   Differentiate between `expr()` (for defusing your own expressions) and `enquo()` & `enquos()` (for defusing expressions supplied by the user of your function).
+-   Compare `{rlang}` defusing to base-R equivalents.
+
+## Should we care about defused expressions? {-}
+
+-   [`expr()` on CRAN](https://github.com/search?q=org%3Acran+%2F%28%5E%7C%5Cs%2B%7C%3A%29expr%5C%28%2F&type=code)
+    -   Mostly literal metaprogramming? [{esquisse}](https://cran.r-project.org/package=esquisse), {gtsummary}, {tidyverse} packages
+-   [`enquo()` on CRAN](https://github.com/search?q=org%3Acran+%2F%28%5E%7C%5Cs%2B%7C%3A%29enquo%5C%28%2F&type=code)
+    - Mostly {tidyverse} & things interacting with it
+
+Let's continue through to try to really grok this stuff, even if we* might never use them!
+
+*Full disclosure: I will definitely use them/have used them: [{factory}](https://github.com/jonthegeek/factory/blob/07d9a555d3402f4dfc2abce9c42b886134e40abb/R/build_factory.R#L105) [{beekeeper}](https://jonthegeek.github.io/beekeeper/)
+
+## Why "defuse"? {-}
+
+```{r booby-trap}
+ignore <- function(arg) NULL
+force <- function(arg) arg
+
+ignore(warning("boom"))
+#> NULL
+
+force(warning("boom"))
+#> Warning in force(warning("boom")): boom
+
+expr(force(warning("boom")))
+#> force(warning("boom"))
+```
+
+> In a way, arguments are like booby traps which explode (evaluate) when touched. 
+Defusing an argument can be seen as defusing the booby trap.
+
+## What are the 3 types of defused expressions? {-}
+
+| **type** | **examples** | **definition**                  |
+|:---------|:-------------|:--------------------------------|
+|calls     |`f(1, 2, 3)`<br />`1 + 1` |the action of calling a function to compute a new value|
+|symbols   |`x`<br />`df`|named objects|
+|constants |`1`<br />`NULL`|the actual object|
+
+Note: Defused constants are still the constants themselves.
+
+```{r defused-constants}
+expr(1) == 1
+#> TRUE
+```
+
+## How can we create defused expressions? {-}
+
+`rlang::expr()` captures what you send in
+
+```{r expr}
+expr(foo)
+#> foo
+
+expr(mean(foo, na.rm = TRUE))
+#> mean(foo, na.rm = TRUE)
+```
+
+## How else can we create defused expressions? {-}
+
+Types ➡️ names of creation functions
+
+```{r expr-types}
+x <- "foo"
+sym(x) == expr(foo)
+#> TRUE
+
+call("mean", sym(x), na.rm = TRUE) == expr(mean(foo, na.rm = TRUE))
+#> TRUE
+```
+
+## Function references {-}
+
+-   [expr()](https://rlang.r-lib.org/reference/expr.html)
+-   [enquo() enquos()](https://rlang.r-lib.org/reference/enquo.html)
+-   [base::eval()](https://rdrr.io/r/base/eval.html)
+-   [eval_tidy()](https://rlang.r-lib.org/reference/eval_tidy.html)
+-   [eval_bare()](https://rlang.r-lib.org/reference/eval_bare.html)
+-   [quo_is_missing() quo_is_symbol() quo_is_call() quo_is_symbolic() quo_is_null() quo_get_expr() quo_get_env() quo_set_expr() quo_set_env()](https://rlang.r-lib.org/reference/quosure-tools.html)
+-   [sym() syms() data_sym() data_syms()](https://rlang.r-lib.org/reference/sym.html)
+-   [base::call()](https://rdrr.io/r/base/call.html)
+-   [call2()](https://rlang.r-lib.org/reference/call2.html)
+-   [base::bquote()](https://rdrr.io/r/base/bquote.html)
+-   [base::substitute() base::quote() base::enquote()](https://rdrr.io/r/base/substitute.html)
+-   [parse_expr() parse_exprs() parse_quo() parse_quos()](https://rlang.r-lib.org/reference/parse_expr.html)
+-   [expr_print() expr_deparse()](https://rlang.r-lib.org/reference/expr_print.html)
+-   [is_expression() is_syntactic_literal() is_symbolic()](https://rlang.r-lib.org/reference/is_expression.html)
+
+## Meeting Videos {-}
+
+### Cohort 1 {-}
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+LOG
+```
+</details>

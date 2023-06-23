@@ -1,0 +1,172 @@
+# Metaprogramming Part 2
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  eval = FALSE,
+  echo = TRUE
+)
+library(rlang)
+```
+
+**Learning objectives:**
+
+-   What is a quosure?
+-   Why is a quosure?
+-   How is a quosure?
+-   Working with formulas
+
+## What the heck is a quosure? {-}
+
+"A quosure is a special type of defused expression that keeps track of the original context the expression was written in."
+
+## Why do I need quosures? {-}
+
+**User environment**:
+
+```{r}
+div100 <- function(x) {
+  x / 100
+}
+
+dplyr::starwars %>%
+  foo::summarise_bmi(mass, div100(height))
+```
+
+**Package foo**:
+
+```{r}
+bmi <- function(mass, height) {
+  mass / height^2
+}
+
+summarise_bmi <- function(data, mass, height) {
+  data %>%
+    bar::summarise_stats(bmi({{ mass }}, {{ height }}))
+}
+```
+
+**Package bar**:
+
+```{r}
+check_numeric <- function(x) {
+  stopifnot(is.numeric(x))
+  x
+}
+
+summarise_stats <- function(data, var) {
+  data %>%
+    dplyr::transmute(
+      var = check_numeric({{ var }})
+    ) %>%
+    dplyr::summarise(
+      mean = mean(var, na.rm = TRUE),
+      sd = sd(var, na.rm = TRUE)
+    )
+}
+```
+
+**All add up to...**
+
+```{r}
+dplyr::transmute(
+var =
+  check_numeric(
+    bmi(
+      mass,
+      div100(height)
+    )
+  )
+)
+```
+
+With each tab over indicating a quosure boundary
+
+- You need to make sure that `mass` and `height` stay properly tracked throughout environments
+
+## Why? (In Practice) {-}
+
+**Foreign and local expressions**:
+
+```{r}
+my_fun <- function(my_var) {
+  their_function({{ my_var }})
+  # or
+  my_new_var <- enquo(my_var)
+  their_function(!!my_new_var)
+}
+```
+
+**External defusing with `...`**:
+
+```{r}
+my_group_by <- function(data, vars) {
+  data |>
+    dplyr::group_by(!!!vars)
+}
+
+my_group_by(data, dplyr::vars(X1, X2))
+```
+
+- `dplyr::vars()` creates quosures and passes them
+  - An alias of `rlang::quos()`
+- "As a rule of thumb, quosures are only needed for arguments defused with enquo() or enquos() (or with {{ which calls enquo() implicitly)"
+  
+## Okay, but what is a quosure? {-}
+
+```{r, eval=TRUE}
+rlang::quo(mtcars)
+
+my_fun <- function(data) { print(rlang::quo(data)) }
+my_fun(mtcars)
+```
+
+- A quosure has two parts:
+  1. An expression (`rlang::quo_get_expr()`)
+  2. An environment (`rlang::quo_get_env()`)
+  
+- A quosure is:
+  - *callable*: Evaluation produces a result (currently require `rlang::eval_tidy()`)
+  - *hygienic*: Evaluates in the tracked environment
+  - *maskable*: "If evaluated in a data mask (currently only masks created with eval_tidy() or new_data_mask()), the mask comes first in scope before the quosure environment."
+  
+- Quosures are similar to promises for lazy evaluation, but quosures are repeatable and do not cache results
+- Constants have an `empty` environment due to the structure of base R
+
+A bit borrowed from Advanced R:
+
+- Quosures are a subclass of formulas and are therefore call objects with an environment attribute
+
+## Quosure Helpers {-}
+
+- Defuse arguments as quosures: `enquo()` and `enquos()`
+- Wrapping to create a new quosure: `quo()` and `quos()`
+- Get the parts of a quosure: `quo_get_expr()` and `quo_get_env()`
+- Assembling a new quosure: `new_quosure()` and `as_quosure()`
+
+## Formulas {-}
+
+- Formulas have a left hand side ~ and a right hand side or `~ "left" "right"`
+- `{rlang}` provides helpers to 
+  - access and set the left and right hand side
+  - create new formulas with a specified environment
+
+## Formula Helpers {-}
+
+- Access and set the left and right hand side: `f_lhs()` and `f_rhs()`
+- Access and set the environment: `f_env()`
+- Create a new formula from parts: `new_formula()`
+- Is this a formula?: `is_formula()` and `is_bare_formula()`
+
+## Meeting Videos {-}
+
+### Cohort 1 {-}
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+LOG
+```
+</details>

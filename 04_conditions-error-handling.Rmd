@@ -35,7 +35,7 @@ Detour: [tidyverse error messages](https://style.tidyverse.org/error-messages.ht
 
 ## Error message content: Problem statement {-}
 
-> Every error message should start with a general statement of the problem. It should be concise, but informative (This is hard!
+> Every error message should start with a general statement of the problem. It should be concise, but informative (This is hard!).
 
 -   Clear cause: use "must"
     -   "`n` must be a numeric vector, not a character vector."
@@ -73,6 +73,19 @@ More rules in [style guide](https://style.tidyverse.org/error-messages.html#punc
 -   If multiple problems, list up to 5, with "... and 5 more problems" (etc)
 -   Aim for < 80 characters per bullet
 -   Keep sentences simple for easier (eventual) localization/translation
+
+## More about cli: Markup {-}
+
+-   Can use `glue::glue()` syntax when `{glue}` is available
+    -   `use_import_from("glue", "glue")`
+-   Can also apply classes
+    -   `adjective <- "great"; cli_text("This is {.emph {adjective}}.")`
+-   Lots of classes (see [?cli::`inline-markup`](https://cli.r-lib.org/reference/inline-markup.html))
+    -   `arg` = function argument,
+    -   `cls` = S3/S4/R6/S7 class name
+    -   `code` = code
+    -   `help` = function help page, will link when possible
+    -   Seriously see the [help](https://cli.r-lib.org/reference/inline-markup.html)!
 
 ## More about cli: Pluralization {-}
 
